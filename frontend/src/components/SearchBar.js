@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { toast } from 'react-toastify';
-const config = require("../config/constants.json")
+import Api from '../api/apiService'
 
 export default class SearchBar extends Component {
 
@@ -18,16 +18,7 @@ export default class SearchBar extends Component {
             latitude: this.state.location.lat,
             longitude: this.state.location.lng,
         }
-        fetch(`${config.endpoint}/api/stores/getClosest`, {
-            method: "POST",
-            body: JSON.stringify(location),
-            dataType: "JSON",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-            }
-        }).then((resp) => {
-            return resp.json()
-        }).then((data) => {
+        Api.getClosest(location).then((data) => {
 
             if (data.status === "OK") {
                 this.setState(
@@ -46,18 +37,7 @@ export default class SearchBar extends Component {
         })
     }
     searchAddress = () => {
-        fetch(`${config.endpoint}/api/users/getLocation`, {
-            method: "POST",
-            body: JSON.stringify({
-                "address": this.state.address
-            }),
-            dataType: "JSON",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-            }
-        }).then((resp) => {
-            return resp.json()
-        }).then((data) => {
+        Api.getLocation(this.state.address).then((data) => {
             if (data.location.status === "OK") {
                 this.setState(
                     {
