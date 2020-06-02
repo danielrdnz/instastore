@@ -7,17 +7,6 @@ module.exports = (app) => {
   const logger = new Logger('app')
   app.use('/stores', route);
 
-/**
- * @api {get} /stores/test Prueba de conexion al API
- * @apiName Test
- * @apiGroup Stores
- *
- * @apiSuccess {String} 'First Store'.
- */
-  route.get('/test', (req, res) => {
-    return res.json({ store: "First Store" });
-  });
-
 
   /**
  * @api {post} /stores/getClosest Busca la tienda mas cercana
@@ -59,32 +48,6 @@ module.exports = (app) => {
 
   });
 
-  /**
- * @api {post} /stores/getNearby Busca las tiendas mas cercana
- * @apiName GetNearby
- * @apiGroup Stores
- * 
- * @apiParam {Position} posicion en formato {"latitude": {Number}, "longitude": {Number}} 
- *
- * @apiSuccess {Store[]} {
-        storeId: store.code,
-        storeName: store.name,
-        isOpen: true,
-        coordinates: { latitude: store.latitude, longitude: store.longitude },
-        nextDeliveryTime: store.nextDeliveryTime,
-        status: "OK"
-      }.
- */
-  route.post('/getNearby', async (req, res) => {
-    const location = req.body
-    logger.info(`/getNearby request recibido ${location.latitude}, ${location.longitude}`)
-    const stores = await storeService.getNearby(location)
-
-    logger.info(`/getNearby se encuentran ${stores.length} para request ${location.latitude}, ${location.longitude}`)
-
-    return res.json({ stores });
-  });
-
  /**
  * @api {get} /stores/initdb Busca la tienda mas cercana
  * @apiName InitDb
@@ -92,7 +55,7 @@ module.exports = (app) => {
  * 
  * @apiSuccess {Number} numero de tiendas creadas
  */
-  route.get('/initdb', async (req, res) => {
+  route.get('/initdb',async (req, res) => {
     if (process.env.NODE_ENV === "development") {
 
       logger.info("/initdb se inicia creacion BD")
@@ -104,4 +67,5 @@ module.exports = (app) => {
       return res.json({ store: "Action not allowed on " + process.env.NODE_ENV });
     }
   });
+
 };

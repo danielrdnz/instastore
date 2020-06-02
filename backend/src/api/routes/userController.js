@@ -9,16 +9,6 @@ module.exports = (app) => {
   app.use('/users', route);
 
   /**
- * @api {get} /users/me Prueba de conexión API
- * @apiName Me
- * @apiGroup Users
- */
-  route.get('/me', (req, res) => {
-    logger.info("simple test")
-    return res.json({ user: "John Doe" });
-  });
-
-  /**
  * @api {post} /users/auth Autentica un usuario usando un token de firebase
  * @apiName Auth
  * @apiGroup Users
@@ -27,16 +17,17 @@ module.exports = (app) => {
  *
  * @apiSuccess {String} UID del usuario logeado
  */
-  route.post('/auth', async (req, res) => {
+  route.post('/auth', async (req, res, next) => {
     const userToken = req.body
-
-    const uid = await userService.verifyUserToken(userToken)
-    if(uid){
+    try{
+      const uid = await userService.verifyUserToken(userToken)
       logger.info(`usuario con token ${userToken} autenticado`)
-    }else{
+      return res.json({ uid: uid });
+    }catch(error){
       logger.error(`no fue posible autenticar al usuariocon token ${userToken}`)
+      next(error)
     }
-    return res.json({ uid: uid });
+    
   });
 
 

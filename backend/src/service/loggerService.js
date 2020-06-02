@@ -1,5 +1,5 @@
 const winston = require('winston')
-myFormat = () => {
+getDateFormat = () => {
     return new Date(Date.now()).toUTCString()
 }
 class LoggerService {
@@ -14,10 +14,10 @@ class LoggerService {
                 })
             ],
             format: winston.format.printf((info) => {
-                let message = `${myFormat()} | ${info.level.toUpperCase()} | ${route}.log | ${info.message} | `
-                message = info.obj ? message + `data:${JSON.stringify(info.obj)} | ` : message
-                message = this.log_data ? message + `log_data:${JSON.stringify(this.log_data)} | ` : message
-                return message
+                let messageLog = `${getDateFormat()} | ${info.level.toUpperCase()} | ${route}.log | ${info.message} | `
+                messageLog = info.data ? messageLog + `data:${JSON.stringify(info.data)} | ` : messageLog
+                messageLog = this.log_data ? messageLog + `log_data:${JSON.stringify(this.log_data)} | ` : messageLog
+                return messageLog
             })
         });
         this.logger = logger
@@ -25,29 +25,14 @@ class LoggerService {
     setLogData(log_data) {
         this.log_data = log_data
     }
-    async info(message) {
-        this.logger.log('info', message);
+    async info(...message) {
+        this.logger.log('info', message[0], {data : message[1]});
     }
-    async info(message, obj) {
-        this.logger.log('info', message, {
-            obj
-        })
+    async debug(...message) {
+        this.logger.log('debug', message[0], {data : message[1]});
     }
-    async debug(message) {
-        this.logger.log('debug', message);
-    }
-    async debug(message, obj) {
-        this.logger.log('debug', message, {
-            obj
-        })
-    }
-    async error(message) {
-        this.logger.log('error', message);
-    }
-    async error(message, obj) {
-        this.logger.log('error', message, {
-            obj
-        })
+    async error(...message) {
+        this.logger.log('error', message[0], {data : message[1]});
     }
 }
 module.exports = LoggerService

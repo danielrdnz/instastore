@@ -4,13 +4,10 @@ const geoService = require("./geoService")
 module.exports = {
     //check if the user is logged
     async verifyUserToken(idToken) {
-        const uid = await firebaseService.auth(idToken)
-        return uid;
+        return await firebaseService.auth(idToken);
     },
     async getLocation(address) {
-        const location = await geoService.getLocation(address);
-        
-        return location;
+        return await geoService.getLocation(address);;
     }
 
 }

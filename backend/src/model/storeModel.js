@@ -25,15 +25,5 @@ module.exports = {
            
         const closestStore = stores.docs.map(store => store.data())[0]
         return closestStore
-    },
-    async getNearby(limit) {
-        const stores = await admin.firestore().collection('store')
-            .where("position", ">=", limit.lower)
-            .where("position", "<=", limit.upper)
-            .orderBy("position")
-            .get()
-           
-        const closestStore = stores.docs.map(store => store.data())
-        return closestStore
     }
 }
